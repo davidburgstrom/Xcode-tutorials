@@ -19,8 +19,12 @@ struct SwiftUIExperiment: View {
             .buttonStyle(.borderedProminent)
             Text("Mozzarella Sticks")
                 .font(.title2)
+                .background(.yellow)
+                .padding(.leading, 20)
+                .frame(maxWidth: .infinity, alignment: .center)
         }
         .padding()
+        .font(.title2)
     }
 }
 

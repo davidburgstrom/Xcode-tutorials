@@ -14,6 +14,8 @@ class MenuTableViewController: UITableViewController {
 //    let menuController = MenuController() - eliminated in favor of a shared menuController in the MenuController file
     var menuItems = [MenuItem]()
     
+    let loadingIndicator = UIActivityIndicatorView(style: .large)
+    
     @IBSegueAction func showMenuItem(_ coder: NSCoder, sender: Any?) -> MenuItemDetailViewController? {
         guard let cell = sender as? UITableViewCell, let indexPath = tableView.indexPath(for: cell) else {
             return nil
@@ -36,6 +38,15 @@ class MenuTableViewController: UITableViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         title = category.capitalized
+        // Set up loading indicator
+        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(loadingIndicator)
+        NSLayoutConstraint.activate([
+            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+
+        loadingIndicator.startAnimating()
         
         Task.init {
             do {
@@ -44,7 +55,9 @@ class MenuTableViewController: UITableViewController {
                 updateUI(with: menuItems)
             } catch {
                 displayError(error, title: "Failed to fetch menu items for \(self.category)")
+         
             }
+            loadingIndicator.stopAnimating()
         }
 
     }

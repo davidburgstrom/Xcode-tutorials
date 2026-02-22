@@ -97,14 +97,32 @@ class OrderTableViewController: UITableViewController {
     
     func uploadOrder() {
         let menuIds = MenuController.shared.order.menuItems.map { $0.id }
+        // Create and show loading indicator
+        let loadingIndicator = UIActivityIndicatorView(style: .large)
+        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(loadingIndicator)
+        NSLayoutConstraint.activate([
+            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        loadingIndicator.startAnimating()
         Task.init {
             do {
                 let minutesToPrepare = try await
                 MenuController.shared.submitOrder(forMenuIDs: menuIds)
                 minutesToPrepareOrder = minutesToPrepare
-                performSegue(withIdentifier: "confirmOrder", sender: nil)
+                loadingIndicator.stopAnimating()
+                loadingIndicator.removeFromSuperview()
+                
+                if let confirmVC = self.storyboard?.instantiateViewController(identifier: "OrderConfirmationViewController", creator: { coder in
+                    return OrderConfirmationViewController(coder: coder, minutesToPrepare: self.minutesToPrepareOrder)
+                }) {
+                    self.present(confirmVC, animated: true)
+                }
             } catch {
                 displayError(error, title: "Order Submission Failed")
+                loadingIndicator.stopAnimating()
+                loadingIndicator.removeFromSuperview()
             }
         }
     }

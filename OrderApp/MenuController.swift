@@ -19,7 +19,8 @@ class MenuController {
     }
     
     let baseURL = URL(string: "http://localhost:8080/")!
-//    let baseURL = URL(string: "http://192.168.0.164:8080/")!
+    // doing it from your phone doesn't work, i tried. :-/
+//    let baseURL = URL(string: "http://192.168.0.255:8080/")!
 
     func fetchCategories() async throws -> [String] {
         let categoriesURL = baseURL.appendingPathComponent("categories")

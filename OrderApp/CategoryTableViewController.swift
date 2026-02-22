@@ -11,9 +11,20 @@ import UIKit
 class CategoryTableViewController: UITableViewController {
 //    let menuController = MenuController() - eliminated in favor of a shared menuController instance in MenuController
     var categories = [String]()
-
+    let loadingIndicator = UIActivityIndicatorView(style: .large)
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        // Set up loading indicator
+        loadingIndicator.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(loadingIndicator)
+        NSLayoutConstraint.activate([
+            loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            loadingIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
+        
+        loadingIndicator.startAnimating()
         
         Task.init {
             do {
@@ -23,8 +34,9 @@ class CategoryTableViewController: UITableViewController {
             } catch {
                 displayError(error, title: "Failed to Fetch Categories")
             }
+            loadingIndicator.stopAnimating()
         }
-
+        
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
